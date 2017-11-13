@@ -15,7 +15,7 @@ It's all about *layers*
 
 You can build plots like you would for this cake.
 
-![](/Users/sarahhosking/Documents/r/rladies_dataviz_nov2017/images/layer_cake.png)
+![](images/layer_cake.png)
 
 What's so great about layers?
 =============================
@@ -45,7 +45,7 @@ What data are we exploring?
 
 Paris air quality!
 
-![](/Users/sarahhosking/Documents/r/rladies_dataviz_nov2017/images/ParisPollution.png)
+![](images/ParisPollution.png)
 
 (Photo from Le Monde. <http://www.lemonde.fr/planete/article/2014/11/24/a-paris-la-pollution-est-aussi-nocive-que-le-tabagisme-passif_4528203_3244.html>)
 
@@ -61,7 +61,7 @@ And since I live between 2 major arterial roads in city center, my question was 
 About the data set
 ==================
 
-![](/Users/sarahhosking/Documents/r/rladies_dataviz_nov2017/images/logo_airparif.png)
+![](images/logo_airparif.png)
 
 -   5 pollutants monitored
 -   readings collected hourly, 24/7
@@ -215,7 +215,7 @@ p + geom_histogram()
 
 Now, imagine we had 20 pollutants in our data frame.
 
-[](/Users/sarahhosking/Documents/r/rladies_dataviz_nov2017/images/tedious.gif)
+[](images/tedious.gif)
 
 Instead, use *tidy* data.
 
@@ -374,7 +374,7 @@ So just how bad are these outliers, the pollution spikes?
 
 To answer that question, I'd like to add horizontal lines showing the low-med-high-very high thresholds. These are different for each pollutant.
 
-![](/Users/sarahhosking/Documents/r/rladies_dataviz_nov2017/images/citeair-grille-calcul.png)
+![](images/citeair-grille-calcul.png)
 
 ``` r
 # df of 1-hr threshold values for each pollutant

@@ -18,7 +18,6 @@ knitr::opts_chunk$set(echo = TRUE,
                       include = TRUE,
                       message = FALSE,
                       warning = FALSE)
-#library(lubridate)
 library(tidyverse)
 theme_set(theme_bw())
 

@@ -1,7 +1,7 @@
 ---
 title: "What's so great about Ggplot2?"
 author: "Sarah Hosking for #R-Ladies Paris"
-date: "`9 November 2017`"
+date: "9 November 2017"
 output:
    github_document:
      fig_height: 4

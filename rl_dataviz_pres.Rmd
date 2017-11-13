@@ -1,13 +1,15 @@
 ---
 title: "What's so great about Ggplot2?"
-author: "Sarah Hosking of #R-Ladies Paris"
-date: "`r format(Sys.time(), '%B %d %Y')`"
+author: "Sarah Hosking for #R-Ladies Paris"
+date: "`9 November 2017`"
 output:
-  #beamer_presentation: default
-   slidy_presentation:
-     fig_height: 5
-     fig_width: 7
-     font_adjustment: 2
+   github_document:
+     fig_height: 4
+     fig_width: 6
+     includes:
+       before_body: doc_prefix.md
+  #slidy_presentation:
+    #footer: "Source files: https://github.com/limegimlet/rladies_nov2017_ggplot.git "
     
 ---
 
@@ -24,21 +26,55 @@ theme_set(theme_bw())
 
 # It's all about _layers_
 
+You can build plots like you would for this cake.
+
 ![](/Users/sarahhosking/Documents/r/rladies_dataviz_nov2017/images/layer_cake.png)
 
-# How to love Ggplot2
+# What's so great about layers?
 
-1. Get past the jargon
-2. Learn to iterate
-3. Be tidy & facet
+* Modular
+* Easier to read
+* They look good OOTB
 
-# What are we exploring?
+# If Ggplot2 is so easy, why this presentation?
+
+Once you get over the initial learning curve, it's all too easy during demos to go gaga showing off great-looking faceted plots with fabulous colour palettes and themes.
+
+But after a few presentations I noticed what people talked to me about wasn't the fancier plotting techniques. It was a few fundamentals that stumped them. 
+
+# Barriers to true Ggplot2 ❤
+
+1. Opaque terminology
+2. Untidy dataframes
+3. Unclear how to iterate
+
+But before we dive into those ...
+
+# What data are we exploring?
+
+Paris air quality!
 
 ![](/Users/sarahhosking/Documents/r/rladies_dataviz_nov2017/images/ParisPollution.png)
+
+(Photo from Le Monde. http://www.lemonde.fr/planete/article/2014/11/24/a-paris-la-pollution-est-aussi-nocive-que-le-tabagisme-passif_4528203_3244.html)
+
+# Why not data that's, um, less of a downer?
+
+My audience is often Parisian. The air quality data is available for public download, and the internet already has enough plots about cars, irises and diamonds.
+
+Moreoever, when I was really getting into Ggplot2 in late 2016, European headlines were dominated by stories of extreme pollution spikes from fine particulate matter.
+
+And since I live between 2 major arterial roads in city center, my question was "Just how bad is it?" Also, being a runner and cyclist, I wanted to see if there was clearly a best time of day to exercise outdoors.
 
 # About the data set
 
 ![](/Users/sarahhosking/Documents/r/rladies_dataviz_nov2017/images/logo_airparif.png)
+
+* 5 pollutants monitored
+* readings collected hourly, 24/7
+* from July 21 2011 to Oct 31 2017
+* measuring location: Paris Hôtel de Ville
+
 
 ```{r read data, include=FALSE}
 
@@ -49,10 +85,11 @@ str(airparif)
 
 ```{r get names}
 
-names(airparif)
-tail(airparif)
+nrow(airparif)
+head(airparif)
 
 ```
+The 5 pollutants being monitored are:
 
 * `PM25` = Particulate matter < 2.5 µm
 * `PM10` = Particulate matter < 10 µm
@@ -60,44 +97,94 @@ tail(airparif)
 * `CO` = Carbon monoxide
 * `O3` = Ozone
 
-# Create a simple histogram
+# Create the first layer
+
+Let's build a simple histogram of `PM10`.
 
 ```{r}
 
 # create data layer
 ggplot(data = airparif, aes(x = PM10))
 
-# add plot layer
+```
+
+Hmmmmmm.....
+
+# Why is this blank? 
+
+* only told Ggplot2 _what_ to plot, not _how_
+* nonetheless, x-axis is already nicely-formatted
+* next step: add a `geom` layer
+
+# Add a `geom`
+
+```{r}
+
+# add plot-type layer
 ggplot(data = airparif, aes(x = PM10)) + 
   geom_histogram()
 
 ```
 
-# Tip 1: Get past the jargon
+Voilà. But before we go further, let's clarify a few terms.
 
-```aes()```: "map these variables to these visual elements"
+# Opaque term 1: `aes()`
+
+Mental barrier #1 for new(er) Ggplot2 users is `aes()`, called the _aesthetic_. 
+
+This term spooks people. 
+
+In plain English: `aes()` is where you **_map_ data frame variables to visual elements**. 
+
+The most basic visual elements to any plot are the x and y axes. Other examples are `linetype`, `shape`, and `fill`.
+
+# Map visual elements to variables
+
+This tells Ggplot2 to change this visual element for each group. 
+
+Notice how this automatically generates a nice-looking legend.
 
 ```{r}
 
-# create plot layer
-p <- ggplot(data = airparif, aes(x = PM10))
-
-# add plot layer & set fill color to 'blue'  
-p + geom_histogram(fill = 'blue')
-
-# map variable to fill colour
+# create data layer that maps
+# a variable to fill colour
 p <- ggplot(data = airparif, aes(x = PM10, fill = year))
 
 p + geom_histogram()
 
 ```
 
+Before those with design backgrounds start hyperventilating, I've created a rainbow histogram _only to illustrate a point_. As a method to communicate data, it totally sucks.
 
-```geom_xxx()```: the plot type
+# Set a visual element
+
+By contrast, to change the look of the entire plot, you _set_ a visual element to a value. 
 
 ```{r}
 
-# create density plot instead
+# create data layer, *without* fill=
+p <- ggplot(data = airparif, aes(x = PM10))
+
+# add plot layer & set fill color 
+p + geom_histogram(fill = 'blue')
+
+```
+
+
+# Opaque term 2: `geom_xxx()`
+
+This refers to the geometric projection of your data. 
+
+In plain English, it means the plot type.  
+
+So we can easily swap another distribution plot layer (in this case, density plot) that will work with our existing data layer.
+
+```{r}
+
+# create data layer *with* fill mapped to year
+p <- ggplot(data = airparif, aes(x = PM10, fill = year))
+
+# create density plot this time
 p + geom_density()
 
 # make easier on eyes!
@@ -108,7 +195,7 @@ p + geom_density(alpha = 1/4, linetype = 0)
 
 # Tip 2: Use tidy data + facets
 
-Why? Imagine 20 pollutant columns.
+Why? Let's plot the distrubtion of another - NO2.
 
 ```{r}
 
@@ -119,9 +206,11 @@ p + geom_histogram()
 
 ```
 
+Now, imagine we had 20 pollutants in our data frame.
+
 [](/Users/sarahhosking/Documents/r/rladies_dataviz_nov2017/images/tedious.gif)
 
-Instead, use _tidy_ data
+Instead, use _tidy_ data.
 
 ```{r tidy airparif, include=FALSE}
 
@@ -163,6 +252,11 @@ head(airparif.tidy)
 
 # Plot tidy data & facet
 
+The advantage of gathering your data into a tidy format is it generates categorical variables. In our case, `pollutant`.
+
+Categorical variables are easy to group and facet in Ggplot2.
+
+
 ```{r plot tidy pollutants}
 
 # create plot of data layer only
@@ -176,7 +270,8 @@ hg
 # add facet layer
 hg + facet_wrap(~pollutant)
 
-# fix x-axis in facet layer & assign to var
+# assign facet wrap to a variable
+# & fix ranges for x-axes
 fw <- facet_wrap(~pollutant, scales = 'free_x')
 hg + fw
 
@@ -190,10 +285,10 @@ hg + fw
 
 ```{r plot all pollutants}
 
-# original plot
+# display earlier histogram of NO2 only
 p + geom_histogram()
 
-# update plot var to use new df & x var
+# update plot var to use new tidy df & x var
 p <- p %+% airparif.tidy + aes(x = value)
 p + geom_histogram()
 
@@ -210,14 +305,18 @@ p +
 
 ```
 
+The original plot for a single histogram required 2 lines of code. 
 
-# Example: switch to boxplots
+Here we've created 5 histograms using 3 lines of code.
+
+# Another example: switch to boxplots
 
 How do distributions change from month to month?
 
 ```{r boxplot}
 
 # update data layer to plot values by *month*
+# and add a y variable.
 p <- p %+% aes(x = month, y = value)
 
 # add boxplot & facet layers
@@ -237,9 +336,14 @@ bp + fw
 
 ```
 
-# Bonus: Add more data
+Quite frankly, these outliers look scary, particularly for carbon monoxide & nitrogen dioxide. 
+But the values alone don't mean anything to me. I need context.
 
-How bad are these pollution spikes?
+# Add context by adding data
+
+So just how bad are these outliers, the pollution spikes?
+
+To answer that question, I'd like to add horizontal lines showing the low-med-high-very high thresholds. These are different for each pollutant. 
 
 ![](/Users/sarahhosking/Documents/r/rladies_dataviz_nov2017/images/citeair-grille-calcul.png)
 
@@ -280,6 +384,8 @@ head(levels_h.long, 10)
 
 ```
 
+This involves adding a `geom_hline()` layer to the plot. 
+By default, the data specified in data layer is global. However, in subsequent layers you can overwrite this by specifying different data.
 
 ```{r bp with pollution levels}
 
@@ -296,10 +402,15 @@ bp + fw + hl
 
 ```
 
+This reassures me for CO and NO2. PM10 & PM25, on the other hand...
 
 # Bonus: Grouping
 
+As I recall from news headlines, Dec 2016 was a bad month for particulate matter. 
+
 How did pollution fluctuate throughout the day?
+
+To answer this, let's make a faceted spaghetti plot, with a "strand" for each day of the Dec 2016.
 
 ```{r filter on dec 2016, include=FALSE}
 
@@ -309,7 +420,7 @@ dec2016 <- airparif.tidy %>%
 dec2016 <- data.frame(dec2016)
 ```
 
-## Spaghetti line plot
+# Spaghetti line plot
 
 ```{r spaghetti plot}
 
@@ -320,7 +431,21 @@ p.dec16 +
   geom_line() +
   fw
 
-# change default grouping
+```
+
+This is NOT what I was after. 
+
+Why is this happening? 
+
+Remember we are plotting values along an hourly x-axis. There are 31 days in December, so for each hour on the x-axis, there 31 data points. 
+
+By default, ```geom_line()``` connects all of them with a single line. We can change that.
+
+****
+
+```{r}
+
+# change mapping to plot is grouped by date
 p.dec16 <- p.dec16 %+% aes(group = date)
 
 # add geom layer to plot var
@@ -331,13 +456,19 @@ p.dec16 + fw
 
 ```
 
-## Highlight a single line
+That's more like it!
 
-When did PM10 pollution spike?
+For all pollutants except O3, I see big spikes during the middle of the day. Did these all occur on the same day? 
 
-Was there a spike for other pollutants too?
+I know PM10 was extremely high that month, so if I can identify the day with the highest PM10 spike, is that the same day as the big spikes for PM25, NO2 and CO?
 
-```{r filter data, include=FALSE}
+# Highlight a single line
+
+When did PM10 pollution spike? 
+
+We need to create a new data frame for the day of with the highest PM10 value.
+
+```{r filter data}
 
 # Dec 2016 particulate data
 dec2016_pm <- dec2016 %>%
@@ -355,6 +486,9 @@ dec2016_pm_max <- dec2016 %>%
 
 ```
 
+****
+
+Then we will create another `geom_line()` layer using the data for this PM10 spike day.
 
 ```{r plot max PM10 day for all pollutants}
 
@@ -362,12 +496,12 @@ dec2016_pm_max <- dec2016 %>%
 p.spike_day <- geom_line(data = dec2016_pm_max, aes(hour, value,
                                                      colour = pollutant))
 
-# add to Dec 2016 spaghetti plot
+# add on top of the Dec 2016 spaghetti plot
 p.dec16 +
   p.spike_day +
   fw
 
-# add h lines to put things in context
+# add context: bring back the threshold lines
 p.dec16 +
   p.spike_day +
   fw +
@@ -375,52 +509,51 @@ p.dec16 +
 
 ```
 
-# Recap - to visualize groups:
+# Analysis conclusion & follow up
 
-* tidy dataframes
+The plots show that on the day PM10 reached its maximum value for December 2016, PM25, NO2, and CO also reached their peak values for the month. This suggests that those pollutants are positively correlated, especially PM25. 
+
+In terms of severity:
+
+* CO's peak remained within 'very low'
+* NO2's peak got up to 'high'
+* PM10 and PM25 surged into 'very high'
+
+Ideas to follow up:
+
+* Look at correlations between the variables using `ggpairs()`
+* Find out which months and which hours have the lowest pollution levels using `geom_tile()`
+* Calculate statistical significance of the max daily peak vs usual daily peak.
+
+# Ggplot2 recap
+
+To visualize groups:
+
+* use tidy dataframes
 * map grouping variables to `aes()`
 * use `facet_wrap` & `facet_grid`
 
-# Recap - to iterate quickly:
+To iterate quickly:
 
 * update data layer with `%+%`
 * save frequently-used layers as variables
 
 # Learn more
 
-Data wrangling with Dplyr & Tidyr: https://s3.amazonaws.com/udacity-hosted-downloads/ud651/DataWranglingWithR.pdf
+Much of the data munging I did for this presention used the tidyr and dplyr from the `tidyverse` package. This slide show by Garret Grolemund is one of the best slide tutorials I've ever seen.
 
-Ggplots cheatsheet: http://www.rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf
+* Data wrangling with Dplyr & Tidyr: https://s3.amazonaws.com/udacity-hosted-downloads/ud651/DataWranglingWithR.pdf
 
-Ggplot2 book: http://ggplot2.org/book/
+I referred to these quite frequently:
 
-Cookbook for R - Graphs: http://www.cookbook-r.com/Graphs/
+* Ggplot2 cheatsheet: http://www.rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf
 
-# Thank You
+* Online excerpts from _ggplot2: Elegant Graphics for Data Analysis (Use R!)_ by Hadley Wickham is how, among other things, I learned about the magical `%+%` operator: http://ggplot2.org/book/
 
-* Maria Paula CALDAS
-* Critéo
+I have not looked at this book yet, but it is often recommended by Ggplot2 gurus.
 
-And big shout-out to 
+* The _R Graphics Cookbook_ by Winston Chang http://www.cookbook-r.com/Graphs/
 
-* members Mercedes, Naomi & Nura for...
-
-# Our next meetup
-
-What? Kaggle Competition in R
-Who? R-Lady Mercedes SGOBBA
-When? Tues Nov 28 at 19h00
-Where? Ecole Normale Supérieure (75005)
-
-# R-Ladies Paris needs YOU
-
-How you can contribute to R-Ladies Paris:
-
-* Suggest presenters or hosts
-* Help organize events
-* Promote our meetups and group on social media
-* Suggest new formats for meetups
-* Bring ideas to sustain communitylong-term
 
 
 

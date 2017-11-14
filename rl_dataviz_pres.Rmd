@@ -13,7 +13,16 @@ output:
     
 ---
 
-```{r setup, include=FALSE}
+```{r show_all status}
+
+# set variable to conditionally hide some non-ggplot code chunks. 
+# used with `echo=` chunk option.
+show_all = TRUE
+
+```
+
+```{r setup, include=show_all, message=FALSE, warning=FALSE}
+
 knitr::opts_chunk$set(echo = TRUE, 
                       include = TRUE,
                       message = FALSE,
@@ -63,7 +72,7 @@ My audience is often Parisian. The air quality data is available for public down
 
 Moreoever, when I was really getting into Ggplot2 in late 2016, European headlines were dominated by stories of extreme pollution spikes from fine particulate matter.
 
-And since I live between 2 major arterial roads in city center, my question was "Just how bad is it?" Also, being a runner and cyclist, I wanted to see if there was clearly a best time of day to exercise outdoors.
+And since I live between 2 major arterial roads in the city center, my question was "Just how bad is it?" Also, being a runner and cyclist, I wanted to see if there was clearly a best time of day to exercise outdoors.
 
 # About the data set
 
@@ -75,7 +84,7 @@ And since I live between 2 major arterial roads in city center, my question was 
 * measuring location: Paris Hôtel de Ville
 
 
-```{r read data, include=FALSE}
+```{r read data, include=show_all}
 
 airparif <- read_rds("airparif_oct2017.rds")
 str(airparif)
@@ -88,6 +97,7 @@ nrow(airparif)
 head(airparif)
 
 ```
+
 The 5 pollutants being monitored are:
 
 * `PM25` = Particulate matter < 2.5 µm
@@ -211,7 +221,7 @@ Now, imagine we had 20 pollutants in our data frame.
 
 Instead, use _tidy_ data.
 
-```{r tidy airparif, include=FALSE}
+```{r tidy airparif, include=show_all}
 
 # make tidy
 airparif.tidy <- airparif %>% 
@@ -230,23 +240,27 @@ str(airparif.tidy)
 
 _Not tidy_
 
-```{r not tidy, echo=FALSE}
+```{r not tidy, echo=show_all}
 
+dim(airparif)
 head(airparif)
 
 ```
 
 _Tidy_
 
-```{r, echo=FALSE}
-
-head(airparif.tidy)
-
-```
-
 * observations in rows
 * variables are columns
 * values in cells
+
+
+```{r, echo=show_all}
+
+dim(airparif.tidy)
+head(airparif.tidy, 20)
+
+
+```
 
 
 # Plot tidy data & facet
@@ -291,7 +305,7 @@ p + geom_histogram()
 p <- p %+% airparif.tidy + aes(x = value)
 p + geom_histogram()
 
-# add them together
+# add facet layer
 p + 
   geom_histogram() +
   fw
@@ -347,7 +361,7 @@ To answer that question, I'd like to add horizontal lines showing the low-med-hi
 ![](images/citeair-grille-calcul.png)
 
 
-```{r show hourly pollution levels, include=FALSE}
+```{r show hourly pollution levels, include=show_all}
 
 # first, define thresholds for diff pollutants
 PM10 <- c(25,50,90,180)
@@ -411,7 +425,7 @@ How did pollution fluctuate throughout the day?
 
 To answer this, let's make a faceted spaghetti plot, with a "strand" for each day of the Dec 2016.
 
-```{r filter on dec 2016, include=FALSE}
+```{r filter on dec 2016, include=show_all}
 
 dec2016 <- airparif.tidy %>%
   filter(year == 2016 & month == 12)
@@ -421,7 +435,7 @@ dec2016 <- data.frame(dec2016)
 
 # Spaghetti line plot
 
-```{r spaghetti plot}
+```{r failed spaghetti plot}
 
 # update p with new df, x & y
 p.dec16 <- p %+% dec2016 + aes(hour, value)
@@ -442,7 +456,7 @@ By default, ```geom_line()``` connects all of them with a single line. We can ch
 
 ****
 
-```{r}
+```{r spaghetti plot}
 
 # change mapping to plot is grouped by date
 p.dec16 <- p.dec16 %+% aes(group = date)
@@ -467,7 +481,7 @@ When did PM10 pollution spike?
 
 We need to create a new data frame for the day of with the highest PM10 value.
 
-```{r filter data}
+```{r dec2016_pm}
 
 # Dec 2016 particulate data
 dec2016_pm <- dec2016 %>%
@@ -489,7 +503,7 @@ dec2016_pm_max <- dec2016 %>%
 
 Then we will create another `geom_line()` layer using the data for this PM10 spike day.
 
-```{r plot max PM10 day for all pollutants}
+```{r highlighted spaghetti}
 
 # create geom layer for day of PM10 spike
 p.spike_day <- geom_line(data = dec2016_pm_max, aes(hour, value,

@@ -6,10 +6,8 @@ output:
    github_document:
      fig_height: 4
      fig_width: 6
-     includes:
-       before_body: doc_prefix.md
-  #slidy_presentation:
-    #footer: "Source files: https://github.com/limegimlet/rladies_nov2017_ggplot.git "
+     #includes:
+       #before_body: doc_prefix.md
     
 ---
 

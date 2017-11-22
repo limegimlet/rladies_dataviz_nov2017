@@ -536,6 +536,34 @@ Ideas to follow up:
 * Find out which months and which hours have the lowest pollution levels using `geom_tile()`
 * Calculate statistical significance of the max daily peak vs usual daily peak.
 
+# Following up - Stats
+
+```{r stat analysis}
+
+# boxplots with hlines for thresholds
+bp + fw + hl
+
+# diesel pollutants
+diesel <-  c('PM10', 'PM25', 'NO2')
+
+# filter for diesel pollutants only
+levels_h_diesel.long <- levels_h.long %>% 
+  filter(pollutant %in% diesel)
+
+airparif.tidy.pm <- airparif.tidy %>% 
+  filter(pollutant %in% diesel)
+
+# update boxplot
+bp %+% airparif.tidy.pm + aes(x = month, y = value) +
+  facet_grid(pollutant ~ year, scales = 'free_y') +
+  geom_hline(data = levels_h_diesel.long,
+               aes(yintercept = value, group = pollutant), linetype = 2)
+
+
+```
+
+
+
 # Ggplot2 recap
 
 To visualize groups:

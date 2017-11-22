@@ -18,9 +18,11 @@ theme_set(theme_bw())
 
 ## Read files
 
-```{r air pollution in paris Oct 2017}
+```{r airparif df}
 
-airparif <- read.csv("airparif_centre_31_10_2017.csv", sep = ";", stringsAsFactors = FALSE)
+#airparif <- read.csv("airparif_centre_31_10_2017.csv", sep = ";", stringsAsFactors = FALSE)
+
+airparif <- read.csv("airparif_centre_21_11_2017.csv", sep = ";", stringsAsFactors = FALSE)
 ```
 
 ```{r}

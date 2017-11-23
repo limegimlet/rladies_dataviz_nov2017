@@ -553,14 +553,93 @@ levels_h_diesel.long <- levels_h.long %>%
 airparif.tidy.pm <- airparif.tidy %>% 
   filter(pollutant %in% diesel)
 
+# creat new hline layer
+hl_diesel <- geom_hline(data = levels_h_diesel.long,
+               aes(yintercept = value, group = pollutant), linetype = 2)
+
 # update boxplot
 bp %+% airparif.tidy.pm + aes(x = month, y = value) +
   facet_grid(pollutant ~ year, scales = 'free_y') +
-  geom_hline(data = levels_h_diesel.long,
-               aes(yintercept = value, group = pollutant), linetype = 2)
+  hl_diesel
 
 
 ```
+
+```{r notched boxplot, outlier alpha}
+fg <- facet_grid(pollutant ~ year, scales = 'free_y')
+
+bp_diesel <- ggplot(airparif.tidy.pm, aes(x = month, y = value)) +
+  geom_boxplot(notch = TRUE, outlier.alpha = 1/5, aes(fill = pollutant))
+
+bp_diesel +
+  fg
+  
+```
+
+Once more, add some context:
+
+```{r diesel boxplot with hlines}
+
+bp_diesel +
+  fg + 
+  hl_diesel
+
+
+
+```
+
+
+Here is a breakdown of min, mean & max values as well as 25th, 50th, & 75th percentiles for each pollutant, for the entire data set.
+
+```{r summary by pollutant}
+
+by(airparif.tidy$value, airparif.tidy$pollutant, summary)
+
+```
+
+Compare with the same stats for the most polluted month of the dataset, Dec 2016. CO, NO2, and PM10 hit their all-time max levels in this month.
+
+```{r dec2016 summary by pollutant}
+
+by(dec2016$value, dec2016$pollutant, summary)
+
+```
+
+What's the standard deviation?
+
+```{r airparif.tidy std dev}
+
+by(airparif.tidy$value, airparif.tidy$pollutant, sd)
+
+```
+
+```{r dec2016 std dev}
+
+by(dec2016$value, dec2016$pollutant, sd)
+
+```
+
+## 24-hour rolling averages for PM10 & PM25
+
+Did we have any 24hr periods that were 'high' or 'very high' for particulate matter? 
+
+```{r 24hr rolling avg}
+
+library(zoo)
+
+# 24 hr moving mean
+airparif.tidy.pm = airparif.tidy.pm %>%
+  filter(pollutant %in% c('PM10')) %>% 
+  group_by(pollutant, year, month, day, hour) %>%
+  arrange(pollutant, year, month, day) %>% 
+  mutate(value.24 = rollmean(x = value, 24, align = "right", fill = NA))
+
+head(airparif.tidy.pm)
+
+
+```
+
+
 
 
 

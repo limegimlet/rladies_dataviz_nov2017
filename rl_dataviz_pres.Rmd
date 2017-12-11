@@ -7,7 +7,7 @@ output:
      fig_height: 4
      fig_width: 6
      #includes:
-       #before_body: doc_prefix.md
+       #before_body: rl_front_matter.md
     
 ---
 
@@ -84,7 +84,7 @@ And since I live between 2 major arterial roads in the city center, my question 
 
 ```{r read data, include=show_all}
 
-airparif <- read_rds("airparif_oct2017.rds")
+airparif <- read_rds("data/airparif_oct2017.rds")
 str(airparif)
 
 ```

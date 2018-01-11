@@ -6,8 +6,8 @@ output:
    github_document:
      fig_height: 4
      fig_width: 6
-     #includes:
-       #before_body: doc_prefix.md
+     includes:
+       before_body: doc_prefix.md
     
 ---
 
@@ -15,7 +15,8 @@ output:
 
 # set variable to conditionally hide some non-ggplot code chunks. 
 # used with `echo=` chunk option.
-show_all = TRUE
+
+show_all = FALSE # if FALSE, uncomment `includes` in header output
 
 ```
 
@@ -84,7 +85,7 @@ And since I live between 2 major arterial roads in the city center, my question 
 
 ```{r read data, include=show_all}
 
-airparif <- read_rds("airparif_oct2017.rds")
+airparif <- read_rds("data/airparif_oct2017.rds")
 str(airparif)
 
 ```
